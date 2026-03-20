@@ -6,6 +6,18 @@ Person Search is a Next.js application upgraded to leverage **Next.js 16** and *
 
 The upgrade to Next.js 16 builds upon the async API changes from Next.js 15, with Turbopack now enabled by default and various performance improvements. See [docs/upgrading-next-16.md](docs/upgrading-next-16.md) for detailed upgrade notes.
 
+## Required Built-in Documentation Pages
+
+- `/about` - Explains the app architecture and technology stack.
+- `/github` - Provides a clickable link to the public GitHub repository.
+- `/database` - Documents the Prisma schema and database structure.
+
+When running locally, open:
+
+- `http://localhost:3000/about`
+- `http://localhost:3000/github`
+- `http://localhost:3000/database`
+
 ## Features
 
 - Asynchronous search functionality
