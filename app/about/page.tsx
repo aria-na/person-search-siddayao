@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Github, Linkedin, Twitter } from 'lucide-react'
+import { Github, Linkedin, Mail } from 'lucide-react'
 
 function ProjectOverview() {
   return (
@@ -31,18 +31,18 @@ function SocialLinks() {
   return (
     <div className="flex flex-wrap gap-4">
       <Button asChild>
-        <Link href="https://www.linkedin.com/in/callumbir/" target="_blank" rel="noopener noreferrer">
+        <Link href="https://www.linkedin.com/in/ariana-siddayao-1b90343b8/" target="_blank" rel="noopener noreferrer">
           <Linkedin className="mr-2 h-4 w-4" /> LinkedIn
         </Link>
       </Button>
       <Button asChild variant="outline">
-        <Link href="https://github.com/gocallum" target="_blank" rel="noopener noreferrer">
+        <Link href="https://github.com/aria-na" target="_blank" rel="noopener noreferrer">
           <Github className="mr-2 h-4 w-4" /> GitHub
         </Link>
       </Button>
       <Button asChild variant="secondary">
-        <Link href="https://x.com/callumbir">
-          <Twitter className="mr-2 h-4 w-4" /> Contact Me
+        <Link href="mailto:arianasiddayao@gmail.com">
+          <Mail className="mr-2 h-4 w-4" /> Email
         </Link>
       </Button>
     </div>
@@ -57,7 +57,7 @@ function DeveloperInfo() {
       </CardHeader>
       <CardContent>
         <p className="mb-4">
-          Hi, I&apos;m <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">Callum Bir</code>, the developer behind Person Search. I&apos;m passionate about creating 
+          Hi, I&apos;m <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">Ariana Siddayao</code>, the developer behind Person Search. I&apos;m passionate about creating 
           efficient, user-friendly web applications using the latest technologies.
         </p>
         <p className="mb-4">

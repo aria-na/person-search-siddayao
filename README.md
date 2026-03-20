@@ -43,7 +43,7 @@ The application requires **Node.js 20.9.0** or newer. Node.js 18 is no longer su
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/gocallum/person-search.git
+  git clone https://github.com/your-github-username/person-search-siddayao.git
    cd person-search
    ```
 
@@ -268,6 +268,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Contact
 
-Callum Bir - [@callumbir](https://twitter.com/callumbir)  
-Project Link: [https://github.com/gocallum/person-search](https://github.com/gocallum/person-search)  
+Ariana Siddayao - [@your_x_handle](https://x.com/your_x_handle)  
+Project Link: [https://github.com/your-github-username/person-search-siddayao](https://github.com/your-github-username/person-search-siddayao)  
 
