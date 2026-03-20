@@ -1,7 +1,7 @@
 {
     "version": 2,
-  "buildCommand": "pnpm run build",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm prisma generate && pnpm run build",
+  "installCommand": "pnpm install --frozen-lockfile --prod=false",
     "framework": "nextjs",
     "outputDirectory": ".next"
   }

@@ -7,8 +7,9 @@ Resolve deployment failure caused by Vercel security policy flagging a vulnerabl
 - Upgraded `next` from `16.0.5` to `16.2.0`.
 - Upgraded `eslint-config-next` from `16.0.5` to `16.2.0`.
 - Updated `vercel.json` to use pnpm commands and lockfile-safe install:
-  - `installCommand`: `pnpm install --frozen-lockfile`
-  - `buildCommand`: `pnpm run build`
+  - `installCommand`: `pnpm install --frozen-lockfile --prod=false`
+  - `buildCommand`: `pnpm prisma generate && pnpm run build`
+- Added `postinstall` script in `package.json` to always run `prisma generate`.
 - Ran local production build successfully.
 
 ## Validation
