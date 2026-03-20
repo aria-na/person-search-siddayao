@@ -6,6 +6,10 @@ Person Search is a Next.js application upgraded to leverage **Next.js 16** and *
 
 The upgrade to Next.js 16 builds upon the async API changes from Next.js 15, with Turbopack now enabled by default and various performance improvements. See [docs/upgrading-next-16.md](docs/upgrading-next-16.md) for detailed upgrade notes.
 
+## Live Demo
+
+- https://person-search-siddayao.vercel.app/
+
 ## Required Built-in Documentation Pages
 
 - `/about` - Explains the app architecture and technology stack.
