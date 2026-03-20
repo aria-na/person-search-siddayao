@@ -172,7 +172,7 @@ export const SearchCommand = <T,>({
           align="start"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
-          {(items.length > 0 || loading) && (
+          {(searchQuery.length > 0 || loading) && (
             <Command shouldFilter={false}>
               <CommandList>
                 <CommandGroup>

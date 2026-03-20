@@ -12,7 +12,8 @@ const users = [
   { name: 'Frank Miller', phoneNumber: '0478901234', email: 'frank@example.com' },
   { name: 'Grace Lee', phoneNumber: '0489012345', email: 'grace@example.com' },
   { name: 'Henry Moore', phoneNumber: '0490123456', email: 'henry@example.com' },
-  { name: 'Isabella Young', phoneNumber: '0401234567', email: 'isabella@example.com' }
+  { name: 'Isabella Young', phoneNumber: '0401234567', email: 'isabella@example.com' },
+  { name: 'Mikael Estillore', phoneNumber: '0491234567', email: 'mikael@example.com' }
 ]
 
 async function main() {
