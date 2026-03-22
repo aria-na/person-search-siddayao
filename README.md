@@ -273,17 +273,7 @@ The `MutableDialog` component currently uses a custom `ActionState` type to hand
 
 This will be addressed in a future update to ensure the `MutableDialog` component remains aligned with React 19's capabilities.
 
-## Contributing
-
-Contributions are welcome! Please submit a Pull Request with your changes.
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 
-## Contact
 
-Ariana Siddayao - [@your_x_handle](https://x.com/your_x_handle)  
-Project Link: [https://github.com/your-github-username/person-search-siddayao](https://github.com/your-github-username/person-search-siddayao)  
 
