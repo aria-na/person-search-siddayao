@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Azeret_Mono as Geist_Mono } from 'next/font/google';
+import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import Navbar from "./components/navbar";
@@ -27,29 +28,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning={true}>
-    <body
-      className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
-    >          
-
-<ThemeProvider
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning={true}>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+        >
+          <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Toaster />
-
-        <Footer />
-        </ThemeProvider>
-
-    </body>
-
-  </html>  );
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Toaster />
+            <Footer />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
+  );
 }
 

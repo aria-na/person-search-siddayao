@@ -3,10 +3,10 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { User, userFormSchema, userSchema } from './schemas'
 import { prisma } from '@/lib/prisma'
 import { randomUUID } from 'crypto'
+import { auth } from '@clerk/nextjs/server'
 
 const userSelect = {
     id: true,
@@ -17,11 +17,11 @@ const userSelect = {
 
 // Fallback store for environments where SQLite is unavailable (e.g. read-only serverless filesystems).
 const fallbackUsers: User[] = [
-    { id: 'u-1', name: 'John Doe', email: 'john@example.com', phoneNumber: '0412345678' },
-    { id: 'u-2', name: 'Jane Smith', email: 'jane@example.com', phoneNumber: '0423456789' },
-    { id: 'u-3', name: 'Alice Johnson', email: 'alice@example.com', phoneNumber: '0434567890' },
-    { id: 'u-4', name: 'Bob Williams', email: 'bob@example.com', phoneNumber: '0445678901' },
-    { id: 'u-5', name: 'Mikael Estillore', email: 'mikael@example.com', phoneNumber: '0491234567' },
+    { id: 'u-1', name: 'John Doe', email: 'john@example.com', phoneNumber: '09171234567' },
+    { id: 'u-2', name: 'Jane Smith', email: 'jane@example.com', phoneNumber: '09181234567' },
+    { id: 'u-3', name: 'Alice Johnson', email: 'alice@example.com', phoneNumber: '09191234567' },
+    { id: 'u-4', name: 'Bob Williams', email: 'bob@example.com', phoneNumber: '09201234567' },
+    { id: 'u-5', name: 'Mikael Estillore', email: 'mikael@example.com', phoneNumber: '09211234567' },
 ]
 
 function isDatabaseUnavailableError(error: unknown): boolean {
@@ -62,9 +62,56 @@ function ensureFallbackUnique(data: { email: string; phoneNumber: string }, excl
     }
 }
 
+function getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message.toLowerCase() : ''
+}
+
+function getUniqueConstraintFields(error: unknown): string[] {
+    const fields = new Set<string>()
+
+    if (typeof error === 'object' && error !== null && 'meta' in error) {
+        const meta = (error as { meta?: { target?: unknown } }).meta
+        const target = meta?.target
+
+        if (Array.isArray(target)) {
+            for (const field of target) {
+                if (typeof field === 'string') {
+                    fields.add(field)
+                }
+            }
+        }
+
+        if (typeof target === 'string') {
+            fields.add(target)
+        }
+    }
+
+    const message = getErrorMessage(error)
+    if (message.includes('email')) {
+        fields.add('email')
+    }
+    if (message.includes('phonenumber') || message.includes('phone number')) {
+        fields.add('phoneNumber')
+    }
+
+    return Array.from(fields)
+}
+
+function isUniqueConstraintError(error: unknown): boolean {
+    if (typeof error === 'object' && error !== null && 'code' in error) {
+        const code = (error as { code?: unknown }).code
+        if (code === 'P2002') {
+            return true
+        }
+    }
+
+    const message = getErrorMessage(error)
+    return message.includes('unique constraint failed') || message.includes('on the fields')
+}
+
 function toUserFacingError(error: unknown): Error {
-    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-        const fields = Array.isArray(error.meta?.target) ? error.meta.target : []
+    if (isUniqueConstraintError(error)) {
+        const fields = getUniqueConstraintFields(error)
 
         if (fields.includes('phoneNumber')) {
             return new Error('Phone number already exists.')
@@ -80,8 +127,28 @@ function toUserFacingError(error: unknown): Error {
     return error instanceof Error ? error : new Error('Unexpected server error.')
 }
 
+async function assertAuthenticated(): Promise<void> {
+    const { userId } = await auth()
+
+    if (!userId) {
+        throw new Error('Authentication required. Please sign in or sign up to continue.')
+    }
+}
+
+function parseUserSafely(user: unknown, context: string): User | null {
+    const parsed = userSchema.safeParse(user)
+    if (!parsed.success) {
+        console.warn(`[actions] Skipping invalid user in ${context}:`, parsed.error.flatten().fieldErrors)
+        return null
+    }
+
+    return parsed.data
+}
+
 export async function searchUsers(query: string): Promise<User[]> {
     try {
+        await assertAuthenticated()
+
         const results = await prisma.user.findMany({
             where: {
                 name: {
@@ -94,7 +161,9 @@ export async function searchUsers(query: string): Promise<User[]> {
             },
         })
 
-        return results.map((user: unknown) => userSchema.parse(user))
+        return results
+            .map((user: unknown) => parseUserSafely(user, 'searchUsers'))
+            .filter((user): user is User => user !== null)
     } catch (error) {
         if (isDatabaseUnavailableError(error)) {
             return getFallbackMatches(query)
@@ -106,6 +175,8 @@ export async function searchUsers(query: string): Promise<User[]> {
 
 export async function addUser(data: Omit<User, 'id'>): Promise<User> {
     try {
+        await assertAuthenticated()
+
         const validatedData = userFormSchema.parse(data)
 
         const createdUser = await prisma.user.create({
@@ -136,6 +207,8 @@ export async function addUser(data: Omit<User, 'id'>): Promise<User> {
 
 export async function deleteUser(id: string): Promise<void> {
     try {
+        await assertAuthenticated()
+
         const existingUser = await prisma.user.findUnique({ where: { id }, select: { id: true } })
         if (!existingUser) {
             throw new Error(`User with id ${id} not found`)
@@ -162,6 +235,8 @@ export async function deleteUser(id: string): Promise<void> {
 
 export async function updateUser(id: string, data: Partial<Omit<User, 'id'>>): Promise<User> {
     try {
+        await assertAuthenticated()
+
         const existingUser = await prisma.user.findUnique({
             where: { id },
             select: userSelect,
@@ -214,7 +289,11 @@ export async function getUserById(id: string): Promise<User | null> {
             select: userSelect,
         })
 
-        return user ? userSchema.parse(user) : null
+        if (!user) {
+            return null
+        }
+
+        return parseUserSafely(user, 'getUserById')
     } catch (error) {
         if (isDatabaseUnavailableError(error)) {
             return fallbackUsers.find((user) => user.id === id) ?? null

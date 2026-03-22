@@ -114,6 +114,12 @@ export const SearchCommand = <T,>({
   const [searchQuery, setSearchQuery] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const focusInput = useCallback(() => {
+    requestAnimationFrame(() => {
+      inputRef.current?.focus()
+    })
+  }, [])
+
   const handleSearch = useCallback(async (value: string) => {
     setSearchQuery(value)
     
@@ -125,6 +131,7 @@ export const SearchCommand = <T,>({
 
     setLoading(true)
     setOpen(true)
+    focusInput()
     
     try {
       const results = await onSearch(value)
@@ -134,8 +141,9 @@ export const SearchCommand = <T,>({
       setItems([])
     } finally {
       setLoading(false)
+      focusInput()
     }
-  }, [onSearch])
+  }, [focusInput, onSearch])
 
   const handleSelect = useCallback((item: T) => {
     setSelectedItem(item)
@@ -146,7 +154,15 @@ export const SearchCommand = <T,>({
 
   return (
     <div className="w-full relative">
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={open}
+        onOpenChange={(nextOpen) => {
+          setOpen(nextOpen)
+          if (nextOpen) {
+            focusInput()
+          }
+        }}
+      >
         <PopoverTrigger asChild>
           <div>
             <Command 
@@ -158,6 +174,11 @@ export const SearchCommand = <T,>({
                 placeholder={placeholder}
                 value={searchQuery}
                 onValueChange={handleSearch}
+                onFocus={() => {
+                  if (searchQuery) {
+                    setOpen(true)
+                  }
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {
                     e.stopPropagation()

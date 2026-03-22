@@ -4,10 +4,12 @@
 import Link from 'next/link';
 import { Search, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useAuth, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
+  const { isLoaded, isSignedIn } = useAuth();
 
   return (
     <nav className="bg-background shadow-md">
@@ -26,6 +28,19 @@ export default function Navbar() {
             <Link href="/about" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
               About
             </Link>
+            {isLoaded && !isSignedIn ? (
+              <>
+              <SignInButton mode="modal">
+                <Button variant="outline" size="sm">
+                  Sign In
+                </Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button size="sm">Sign Up</Button>
+              </SignUpButton>
+              </>
+            ) : null}
+            {isLoaded && isSignedIn ? <UserButton /> : null}
             <Button
               variant="ghost"
               size="icon"

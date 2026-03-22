@@ -2,6 +2,9 @@
 
 import { updateUser } from '@/app/actions/actions'
 import { userFormSchema, User, UserFormData } from '@/app/actions/schemas'
+import { useAuth, useClerk } from '@clerk/nextjs'
+import { Button } from '@/components/ui/button'
+import { toast } from '@/hooks/use-toast'
 import { UserForm } from './user-form'
 import MutableDialog, { ActionState } from '@/components/mutable-dialog'
 
@@ -10,6 +13,18 @@ interface UserEditDialogProps {
 }
 
 export function UserEditDialog({ user }: UserEditDialogProps) {
+  const { isLoaded, isSignedIn } = useAuth()
+  const { openSignIn } = useClerk()
+
+  const promptSignIn = () => {
+    toast({
+      title: "Sign in required",
+      description: "Please sign in or sign up to edit users.",
+      variant: "destructive",
+    })
+    void openSignIn()
+  }
+
   const handleEditUser = async (data: UserFormData): Promise<ActionState<User>> => {
     try {
       const updatedUser = await updateUser(user.id, data)
@@ -24,6 +39,10 @@ export function UserEditDialog({ user }: UserEditDialogProps) {
         message: 'Failed to update user' + (error instanceof Error ? error.message : String(error)),
       }
     }
+  }
+
+  if (isLoaded && !isSignedIn) {
+    return <Button onClick={promptSignIn}>Edit</Button>
   }
 
   return (

@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { User } from '@/app/actions/schemas'
 import { searchUsers } from '@/app/actions/actions'
+import { auth } from '@clerk/nextjs/server'
 
 export async function GET(request: NextRequest) {
+  const { userId } = await auth()
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Authentication required. Please sign in or sign up to continue.' },
+      { status: 401 }
+    )
+  }
+
   const searchParams = request.nextUrl.searchParams
   const query = searchParams.get('query')
 

@@ -17,6 +17,7 @@
     "seed": "node prisma/seed.mjs"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.0.6",
     "@hookform/resolvers": "^3.9.1",
     "@prisma/client": "^6.18.0",
     "@radix-ui/react-accordion": "^1.2.2",

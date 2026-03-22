@@ -4,9 +4,23 @@ import { Button } from "@/components/ui/button"
 import { Trash } from 'lucide-react'
 import { deleteUser } from '@/app/actions/actions'
 import { toast } from "@/hooks/use-toast"
+import { useAuth, useClerk } from '@clerk/nextjs'
 
 export default function DeleteButton({ userId }: { userId: string }) {
+  const { isLoaded, isSignedIn } = useAuth()
+  const { openSignIn } = useClerk()
+
   const handleDelete = async () => {
+    if (isLoaded && !isSignedIn) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in or sign up to delete users.",
+        variant: "destructive",
+      })
+      void openSignIn()
+      return
+    }
+
     try {
       console.log('DeleteButton: Attempting to delete user with ID', userId)
       await deleteUser(userId)
