@@ -16,7 +16,7 @@ export default function DatabasePage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <p>
-              This project uses Prisma ORM with an SQLite database configured through the
+              This project uses Prisma ORM with a PostgreSQL database configured through the
               DATABASE_URL environment variable.
             </p>
             <p>
