@@ -17,7 +17,6 @@ The upgrade to Next.js 16 builds upon the async API changes from Next.js 15, wit
 - `/database` - Documents the Prisma schema and database structure.
 - `/mcp-setup` - Step-by-step setup for connecting Claude Desktop to the Person CRUD MCP server.
 - `/mcp-demo` - Real-time CRUD testing interface with request/response logs.
-- `/claude-chat` - In-app Claude assistant for Person CRUD without opening Claude Desktop.
 
 When running locally, open:
 
@@ -26,7 +25,6 @@ When running locally, open:
 - `http://localhost:3000/database`
 - `http://localhost:3000/mcp-setup`
 - `http://localhost:3000/mcp-demo`
-- `http://localhost:3000/claude-chat`
 
 ## MCP Integration Summary
 
@@ -62,11 +60,6 @@ This project includes a built-in MCP server endpoint so Person records can be ma
 
 - Clerk-authenticated browser session
 - Machine-to-machine header: `x-mcp-api-key` (must match `MCP_API_KEY` on the app)
-
-### In-App Claude Chat Requirements
-
-- `ANTHROPIC_API_KEY` must be configured in environment variables.
-- Optional: `ANTHROPIC_MODEL` (defaults to `claude-3-5-sonnet-latest`).
 
 ### Evaluator Flow
 

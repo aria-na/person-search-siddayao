@@ -34,9 +34,6 @@ export default function Navbar() {
             <Link href="/mcp-demo" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
               MCP Demo
             </Link>
-            <Link href="/claude-chat" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
-              Claude Chat
-            </Link>
             <Link href="/github" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
               GitHub
             </Link>
