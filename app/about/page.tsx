@@ -38,7 +38,7 @@ function MCPArchitecture() {
           1) Web users authenticate with Clerk and perform CRUD through server actions and API routes.
         </p>
         <p>
-          2) MCP server calls the same app API endpoints and provides the x-mcp-api-key header for machine access.
+          2) The MCP route validates x-mcp-api-key for machine access and invokes shared server actions used by the app.
         </p>
         <p>
           3) API handlers enforce access via Clerk session or MCP API key before database operations run.

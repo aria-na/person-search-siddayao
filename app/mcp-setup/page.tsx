@@ -16,6 +16,21 @@ const claudeConfigExample = `{
   }
 }`
 
+const claudeMcpRemoteConfigExample = `{
+  "mcpServers": {
+    "person-crud": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "${appBaseUrl}/api/mcp",
+        "--header",
+        "x-mcp-api-key:your_same_mcp_api_key"
+      ]
+    }
+  }
+}`
+
 const toolsExample = `Available MCP tools:
 - person_create(name, email, phoneNumber)
 - person_list(query?)
@@ -49,7 +64,9 @@ export default function MCPSetupPage() {
             <CardTitle>2) Point Claude Desktop to /api/mcp</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p>Add this MCP server entry in Claude Desktop config.</p>
+            <p>Recommended for Claude Desktop: use mcp-remote bridge config.</p>
+            <pre className="rounded-md bg-muted p-3 text-xs overflow-x-auto">{claudeMcpRemoteConfigExample}</pre>
+            <p>Optional fallback (only if your Claude build supports direct streamable HTTP transport):</p>
             <pre className="rounded-md bg-muted p-3 text-xs overflow-x-auto">{claudeConfigExample}</pre>
           </CardContent>
         </Card>
