@@ -13,14 +13,60 @@ The upgrade to Next.js 16 builds upon the async API changes from Next.js 15, wit
 ## Required Built-in Documentation Pages
 
 - `/about` - Explains the app architecture and technology stack.
-- `/github` - Provides a clickable link to the public GitHub repository.
+- `/github` - Provides clickable links to the app repository and Person MCP server repository.
 - `/database` - Documents the Prisma schema and database structure.
+- `/mcp-setup` - Step-by-step setup for connecting Claude Desktop to the Person CRUD MCP server.
+- `/mcp-demo` - Real-time CRUD testing interface with request/response logs.
 
 When running locally, open:
 
 - `http://localhost:3000/about`
 - `http://localhost:3000/github`
 - `http://localhost:3000/database`
+- `http://localhost:3000/mcp-setup`
+- `http://localhost:3000/mcp-demo`
+
+## MCP Integration Summary
+
+This project includes a built-in MCP server endpoint so Person records can be managed in two ways:
+
+1. Directly in the web app UI (Clerk-authenticated users)
+2. Through Claude Desktop MCP calls to this app's `/api/mcp` endpoint
+
+### Built-in MCP Server Endpoint
+
+- `POST /api/mcp` - JSON-RPC endpoint supporting:
+  - `initialize`
+  - `tools/list`
+  - `tools/call`
+
+### MCP Tools Exposed
+
+- `person_create(name, email, phoneNumber)`
+- `person_list(query?)`
+- `person_get(id)`
+- `person_update(id, name?, email?, phoneNumber?)`
+- `person_delete(id)`
+
+### App API Endpoints Used by MCP
+
+- `GET /api/people?query=...` - list/search users
+- `POST /api/people` - create user
+- `GET /api/people/:id` - read single user
+- `PATCH /api/people/:id` - update user
+- `DELETE /api/people/:id` - delete user
+
+### API Access Modes
+
+- Clerk-authenticated browser session
+- Machine-to-machine header: `x-mcp-api-key` (must match `MCP_API_KEY` on the app)
+
+### Evaluator Flow
+
+1. Open `/mcp-setup` for Claude Desktop setup instructions.
+2. Open `/mcp-demo` and run all CRUD operations live.
+3. Check `/github` for app and MCP server repositories.
+4. Review `/about` for MCP architecture details.
 
 ## Features
 

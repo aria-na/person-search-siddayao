@@ -11,6 +11,12 @@ const userSelect = {
   phoneNumber: true,
 } as const
 
+const updateSchema = userFormSchema
+  .partial()
+  .refine((value) => Object.keys(value).length > 0, {
+    message: 'At least one field is required for update.',
+  })
+
 function isUniqueError(error: unknown): boolean {
   return typeof error === 'object' && error !== null && 'code' in error && (error as { code?: unknown }).code === 'P2002'
 }
@@ -32,55 +38,55 @@ function getUniqueErrorMessage(error: unknown): string {
   return 'A user with the same unique details already exists.'
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const access = await checkApiAccess(request)
   if (!access.ok) {
     return unauthorizedResponse(access.message)
   }
 
-  const searchParams = request.nextUrl.searchParams
-  const query = searchParams.get('query')?.trim() ?? ''
-
-  const where = query
-    ? {
-      name: {
-        startsWith: query,
-      },
-    }
-    : undefined
+  const { id } = await context.params
 
   try {
-    const users = await prisma.user.findMany({
-      where,
+    const user = await prisma.user.findUnique({
+      where: { id },
       select: userSelect,
-      orderBy: {
-        name: 'asc',
-      },
     })
 
-    return NextResponse.json(users)
+    if (!user) {
+      return NextResponse.json({ error: `User with id ${id} not found` }, { status: 404 })
+    }
+
+    return NextResponse.json(user)
   } catch (error) {
-    console.error('Error reading users:', error)
+    console.error('Error reading user by id:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const access = await checkApiAccess(request)
   if (!access.ok) {
     return unauthorizedResponse(access.message)
   }
 
+  const { id } = await context.params
+
   try {
     const body = await request.json()
-    const validated = userFormSchema.parse(body)
+    const validated = updateSchema.parse(body)
 
-    const createdUser = await prisma.user.create({
+    const existingUser = await prisma.user.findUnique({ where: { id }, select: { id: true } })
+    if (!existingUser) {
+      return NextResponse.json({ error: `User with id ${id} not found` }, { status: 404 })
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
       data: validated,
       select: userSelect,
     })
 
-    return NextResponse.json(createdUser, { status: 201 })
+    return NextResponse.json(updatedUser)
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json(
@@ -93,7 +99,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: getUniqueErrorMessage(error) }, { status: 409 })
     }
 
-    console.error('Error creating user:', error)
+    console.error('Error updating user:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const access = await checkApiAccess(request)
+  if (!access.ok) {
+    return unauthorizedResponse(access.message)
+  }
+
+  const { id } = await context.params
+
+  try {
+    const existingUser = await prisma.user.findUnique({ where: { id }, select: { id: true } })
+    if (!existingUser) {
+      return NextResponse.json({ error: `User with id ${id} not found` }, { status: 404 })
+    }
+
+    await prisma.user.delete({ where: { id } })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting user:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

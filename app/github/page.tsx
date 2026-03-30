@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Github } from 'lucide-react'
 
 const repositoryUrl = 'https://github.com/aria-na/person-search-siddayao'
+const mcpRepositoryUrl = process.env.NEXT_PUBLIC_MCP_SERVER_REPO_URL || 'https://github.com/aria-na/person-search-mcp-server'
 
 export default function GithubPage() {
   return (
@@ -28,6 +29,32 @@ export default function GithubPage() {
             <p className="text-sm text-muted-foreground break-all">{repositoryUrl}</p>
           </CardContent>
         </Card>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Person MCP Server Repository</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              This repository contains the MCP server used by Claude Desktop to execute Person CRUD operations
+              against this deployed app.
+            </p>
+            <Button asChild>
+              <Link href={mcpRepositoryUrl} target="_blank" rel="noopener noreferrer">
+                <Github className="mr-2 h-4 w-4" /> Open MCP Server Repository
+              </Link>
+            </Button>
+            <p className="text-sm text-muted-foreground break-all">{mcpRepositoryUrl}</p>
+          </CardContent>
+        </Card>
+
+        <Button asChild variant="outline" className="mt-2 mr-2">
+          <Link href="/mcp-setup">View MCP Setup Page</Link>
+        </Button>
+
+        <Button asChild variant="outline" className="mt-2">
+          <Link href="/mcp-demo">View MCP Demo Page</Link>
+        </Button>
 
         <Button asChild variant="link" className="mt-2">
           <Link href="/">Back to Home</Link>

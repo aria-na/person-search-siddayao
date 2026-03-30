@@ -11,16 +11,40 @@ function ProjectOverview() {
       </CardHeader>
       <CardContent>
         <p className="mb-4">
-          Person Search is a demonstration project showcasing the power of Next.js, React, and modern web technologies. 
-          It provides a simple yet effective interface for searching and displaying user information.
+          Person Search is a production-ready Person directory built with Next.js 16, Prisma, Clerk, and server actions.
+          It supports full CRUD in the web app and through MCP-based tool calls from Claude Desktop.
         </p>
         <p className="mb-4">
-          This project utilizes Next.js 15 with the App Router, React 19, TypeScript, and a variety of 
-          cutting-edge libraries to create a responsive and accessible user experience.
+          The system uses a shared data model and validation layer so both the UI and MCP route consume
+          the same database-backed person records.
         </p>
         <p>
-          Key features include asynchronous search functionality, server-side filtering, 
-          and a dark mode toggle for user comfort.
+          Key capabilities include search, create, update, delete, machine-to-machine MCP access,
+          and evaluator-visible live request logs.
+        </p>
+      </CardContent>
+    </Card>
+  )
+}
+
+function MCPArchitecture() {
+  return (
+    <Card className="mb-8">
+      <CardHeader>
+        <CardTitle>MCP Integration Architecture</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p>
+          1) Web users authenticate with Clerk and perform CRUD through server actions and API routes.
+        </p>
+        <p>
+          2) MCP server calls the same app API endpoints and provides the x-mcp-api-key header for machine access.
+        </p>
+        <p>
+          3) API handlers enforce access via Clerk session or MCP API key before database operations run.
+        </p>
+        <p>
+          4) Prisma writes and reads from the Person database so app UI and MCP tools stay in sync.
         </p>
       </CardContent>
     </Card>
@@ -76,12 +100,21 @@ export default function AboutPage() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">About Person Search</h1>
         <ProjectOverview />
+        <MCPArchitecture />
         <DeveloperInfo />
-        <Button asChild variant="link" className="mt-4">
-          <Link href="/">
-            Back to Home
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline" className="mt-2">
+            <Link href="/mcp-setup">MCP Setup Guide</Link>
+          </Button>
+          <Button asChild variant="outline" className="mt-2">
+            <Link href="/mcp-demo">MCP Live Demo</Link>
+          </Button>
+          <Button asChild variant="link" className="mt-2">
+            <Link href="/">
+              Back to Home
+            </Link>
+          </Button>
+        </div>
       </main>
     </div>
   )
