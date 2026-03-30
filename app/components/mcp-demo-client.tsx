@@ -199,9 +199,13 @@ export default function MCPDemoClient() {
       query: query.trim() || undefined,
     })
 
-    if (result.ok && Array.isArray(result.data)) {
-      setPeople(result.data)
-      setMessage(`Loaded ${result.data.length} record(s).`)
+    const listData = Array.isArray(result.data)
+      ? result.data
+      : (result.data as { items?: Person[] } | null)?.items
+
+    if (result.ok && Array.isArray(listData)) {
+      setPeople(listData)
+      setMessage(`Loaded ${listData.length} record(s).`)
     } else {
       setMessage('Failed to load records. Check request log details.')
     }

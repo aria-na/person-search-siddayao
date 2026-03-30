@@ -67,6 +67,8 @@ function failure(id: JsonRpcId, code: number, message: string, status = 200) {
 }
 
 function toolResponse(payload: unknown) {
+  const normalizedPayload = Array.isArray(payload) ? { items: payload } : payload
+
   return {
     content: [
       {
@@ -74,7 +76,7 @@ function toolResponse(payload: unknown) {
         text: JSON.stringify(payload, null, 2),
       },
     ],
-    structuredContent: payload,
+    structuredContent: normalizedPayload,
   }
 }
 
