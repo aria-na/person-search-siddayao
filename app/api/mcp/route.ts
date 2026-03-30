@@ -28,7 +28,7 @@ const personCreateSchema = z.object({
 })
 
 const personListSchema = z.object({
-  query: z.string().optional(),
+  query: z.string().nullable().optional(),
 })
 
 const personGetSchema = z.object({
@@ -37,9 +37,9 @@ const personGetSchema = z.object({
 
 const personUpdateSchema = z.object({
   id: z.string().min(1),
-  name: z.string().optional(),
-  email: z.string().optional(),
-  phoneNumber: z.string().optional(),
+  name: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  phoneNumber: z.string().nullable().optional(),
 })
 
 const personDeleteSchema = z.object({
@@ -155,7 +155,7 @@ async function handleToolCall(name: string, args: Record<string, unknown>) {
     }
     case 'person_list': {
       const input = personListSchema.parse(args)
-      const listed = await mcpListPeople(input.query)
+      const listed = await mcpListPeople(input.query ?? undefined)
       return toolResponse(listed)
     }
     case 'person_get': {
@@ -166,7 +166,10 @@ async function handleToolCall(name: string, args: Record<string, unknown>) {
     case 'person_update': {
       const input = personUpdateSchema.parse(args)
       const { id, ...data } = input
-      const updated = await mcpUpdatePerson(id, data)
+      const sanitizedData = Object.fromEntries(
+        Object.entries(data).filter(([, value]) => value !== null && value !== undefined && value !== ''),
+      )
+      const updated = await mcpUpdatePerson(id, sanitizedData)
       return toolResponse(updated)
     }
     case 'person_delete': {
