@@ -214,5 +214,3 @@ export async function chatWithClaude(messages: ChatMessage[]): Promise<{ reply: 
     reply: 'I could not complete that request in time. Please try again with a more specific instruction.',
   }
 }
-
-export type { ChatMessage }

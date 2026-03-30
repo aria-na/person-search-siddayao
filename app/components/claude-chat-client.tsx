@@ -1,11 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { chatWithClaude, type ChatMessage } from '@/app/actions/claude-chat-actions'
+import { chatWithClaude } from '@/app/actions/claude-chat-actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
+
+type ChatMessage = {
+  role: 'user' | 'assistant'
+  content: string
+}
 
 const starters = [
   'List all people.',
